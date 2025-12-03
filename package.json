@@ -1,0 +1,17 @@
+{
+  "name": "advent-of-code-2025",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Kkolias/Advent-Of-Code-2025",
+  "author": "Elias Koivuporras <elias.koivuporras@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "run": "ts-node",
+    "run:day1": "ts-node ./day1/day1.ts",
+    "run:day2": "ts-node ./day2/day2.ts"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
