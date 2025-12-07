@@ -1,4 +1,4 @@
-import input from "./input"
+import input from "./input";
 // import input from "./input-mock";
 /* 
 example:
@@ -26,42 +26,58 @@ x.@@@.@@@@
 x.x.@@@.x.
 */
 
-export function getParsedGrid() {
+export function getParsedGrid(repeatTillStable = false): string[][] {
   const grid = getParsedInput();
 
   const columnLength = grid[0].length - 1;
   const rowLength = grid.length - 1;
 
-  const outputGrid = getParsedInput();
+  let outputGrid = getParsedInput();
   let columnIndex = 0;
   let rowIndex = 0;
-  while (rowIndex <= rowLength) {
-    while (columnIndex <= columnLength) {
-      if (grid[rowIndex][columnIndex] === "@") {
-        const isPositionForkliftValid = getIsPositionForkliftValid(
-          grid,
-          rowIndex,
-          columnIndex
-        );
-        // console.log({
-        //   rowIndex,
-        //   columnIndex,
-        //   isPositionForkliftValid,
-        // });
-        if (isPositionForkliftValid) {
-          outputGrid[rowIndex][columnIndex] = "x";
-        }
-      }
 
-      columnIndex++;
+  let changesMade = true;
+  while ((changesMade = true)) {
+    changesMade = false;
+    while (rowIndex <= rowLength) {
+      while (columnIndex <= columnLength) {
+        if ([...outputGrid][rowIndex][columnIndex] === "@") {
+          const isPositionForkliftValid = getIsPositionForkliftValid(
+            [...outputGrid],
+            rowIndex,
+            columnIndex
+          );
+
+          if (isPositionForkliftValid) {
+            outputGrid[rowIndex][columnIndex] = "x";
+            changesMade = true;
+          }
+        }
+
+        columnIndex++;
+      }
+      columnIndex = 0;
+
+      rowIndex++;
     }
-    columnIndex = 0;
-    // console.log("ROW OUTPUT:", outputGrid[rowIndex]);
-    // console.log("INPUT ROW:", grid[rowIndex]);
-    rowIndex++;
+    if (!repeatTillStable) {
+      return outputGrid;
+    }
+    if (!changesMade) {
+      // console.log("GRID AFTER FULL ROUND", outputGrid);
+      const replacedGrid = replaceXWithDots(outputGrid);
+      return replacedGrid;
+    }
+    const replacedGrid = replaceXWithDots(outputGrid);
+    outputGrid = replacedGrid;
+    // console.log("GRID AFTER FULL ROUND", outputGrid);
+    rowIndex = 0;
   }
-  // console.log("FIRST ROW OUTPUT:", outputGrid[0]);
   return outputGrid;
+}
+
+function replaceXWithDots(grid: string[][]): string[][] {
+  return grid.map((row) => row.map((cell: string) => cell.replace("x", ".")));
 }
 
 function getParsedInput(): string[][] {
@@ -79,19 +95,12 @@ function getNeighbourValuesOfPosition(
   const hasTopNeighbours = rowIndex > 0;
   const hasBottomNeighbous = rowIndex < grid.length - 1;
 
-  // esim [
-  // [., @, @], rowIndex 0
-  // [@, @, .], rowIndex 1
-  // [., ., @], rowIndex 2
-  // ]
-
   //   console.log({
   //     hasLeftNeighbours,
   //     hasRightNeighbours,
   //     hasTopNeighbours,
   //     hasBottomNeighbous,
   //   });
-  // left side
   let topLeft = null;
   let top = null;
   let topRight = null;
@@ -167,15 +176,28 @@ function getAnwser(parsedGrid: string[][]): number {
   return xCount;
 }
 
+function getAnswer2(originalGrid: string[][], newGrid: string[][]): number {
+  const originalFlat = originalGrid.flat();
+  const newFlat = newGrid.flat();
+
+  const originalAtCount = originalFlat.filter((i) => i === "@").length;
+  const newAtCount = newFlat.filter((i) => i === "@").length;
+
+  return originalAtCount - newAtCount;
+}
+
 function main() {
-  console.log("Advent Of Code 2025 Day 4 Part 1");
+  console.log("Advent Of Code 2025 Day 4");
   //     const input = getParsedInput();
   //   const a = getIsPositionForkliftValid(input, 1, 0);
   //     console.log("ONKO", a);
   const r = getParsedGrid();
-  //   return r;
-  console.log(getAnwser(r));
-  //   console.log(input);
+  console.log("Part 1:", getAnwser(r));
+  console.log("---------------");
+
+  const originalGrid = getParsedInput();
+  const r2 = getParsedGrid(true);
+  console.log("Part 2:", getAnswer2(originalGrid, r2));
 }
 
 main();
