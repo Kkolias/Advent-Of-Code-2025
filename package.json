@@ -10,7 +10,8 @@
     "run:day1": "ts-node ./day1/day1.ts",
     "run:day2": "ts-node ./day2/day2.ts",
     "run:day3": "ts-node ./day3/day3.ts",
-    "run:day4": "ts-node ./day4/day4.ts"
+    "run:day4": "ts-node ./day4/day4.ts",
+    "run:day5": "ts-node ./day5/day5.ts"
   },
   "dependencies": {
     "ts-node": "^10.9.2",
